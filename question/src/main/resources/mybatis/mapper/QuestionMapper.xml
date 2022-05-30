@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cfs.mapper.QuestionMapper">
+<mapper namespace="com.javaee.mapper.QuestionMapper">
 
     <resultMap id="choiceQuestionMap" type="com.javaee.entities.QuestionPublicSc">
         <id column="id" property="id"></id>
@@ -22,7 +22,7 @@
         <result column="type" property="type"></result>
     </resultMap>
 
-    <resultMap id="choiceMapWithName" type="com.cfs.entities.QuestionPublicScWithName">
+    <resultMap id="choiceMapWithName" type="com.javaee.entities.QuestionPublicScWithName">
         <id column="id" property="id"></id>
         <result column="text" property="text"></result>
         <result column="option1" property="option1"></result>
@@ -44,7 +44,7 @@
         <result column="modular_name" property="modularName"></result>
     </resultMap>
 
-    <resultMap id="completionMap" type="com.cfs.entities.QuestionPublicComp">
+    <resultMap id="completionMap" type="com.javaee.entities.QuestionPublicComp">
         <id column="id" property="id"></id>
         <result column="content" property="content"></result>
         <result column="answer1" property="answer1"></result>
@@ -62,7 +62,7 @@
         <result column="type" property="type"></result>
     </resultMap>
 
-    <resultMap id="completionWithNameMap" type="com.cfs.entities.QuestionPublicCompWithName">
+    <resultMap id="completionWithNameMap" type="com.javaee.entities.QuestionPublicCompWithName">
         <id column="id" property="id"></id>
         <result column="content" property="content"></result>
         <result column="answer1" property="answer1"></result>

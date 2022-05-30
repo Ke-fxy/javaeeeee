@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cfs.mapper.TeacherMapper">
+<mapper namespace="com.javaee.mapper.TeacherMapper">
   <resultMap id="BaseResultMap" type="com.javaee.entities.Teacher">
     <id column="id" property="id"></id>
     <result column="tno" property="tNo"></result>
