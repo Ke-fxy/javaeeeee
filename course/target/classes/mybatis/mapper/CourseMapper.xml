@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaee.mapper.CourseMapper">
+
+    <resultMap id="BaseResultMap" type="com.javaee.entities.Course">
+        <id column="id" property="id"></id>
+        <result column="number" property="number"></result>
+        <result column="credit" property="credit"></result>
+        <result column="type" property="type"></result>
+        <result column="course_name" property="courseName"></result>
+        <result column="mode" property="mode"></result>
+        <result column="creater_id" property="createrId"></result>
+        <result column="status" property="status"></result>
+    </resultMap>
+
+    <insert id="add">
+        insert into course(id, number, credit, type, course_name, mode, creater_id)
+        values (#{id}, #{number}, #{credit}, #{type}, #{courseName}, #{mode}, #{createrId})
+    </insert>
+
+
+    <delete id="delete">
+
+        delete from course
+        where course.id = #{id}
+
+    </delete>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select *
+        from course
+    </select>
+
+    <select id="getChapters" resultType="com.javaee.entities.Chapter">
+        select *
+        from chapter
+        where course_id = #{courseId}
+    </select>
+
+    <select id="getModulars" resultType="com.javaee.entities.Modular">
+        select *
+        from modular
+        where course_id = #{courseId}
+    </select>
+
+    <select id="getCourseById" resultMap="BaseResultMap">
+        select *
+        from course
+        where id = #{courseId}
+    </select>
+
+    <select id="getChapter" resultType="com.javaee.entities.Chapter">
+        select *
+        from chapter
+        where course_id = #{courseId}
+    </select>
+
+    <insert id="addCourseToStu">
+        insert into course_teacher_stu
+        values (null, #{courseId}, #{teacherId}, #{studentId})
+    </insert>
+
+    <insert id="addModular">
+        insert into modular
+        values (null, #{courseId}, #{modularName})
+    </insert>
+
+    <insert id="addChapter">
+        insert into chapter
+        values (null, #{courseId}, #{chapName})
+    </insert>
+
+    <update id="update">
+        update course
+        set number      = #{number},
+            credit      = #{credit},
+            type        = #{type},
+            course_name = #{courseName},
+            mode        = #{mode}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChapter">
+
+        delete from  chapter
+        where chapter.course_id = #{courseId}
+          AND chapter . chapter_name=#{chapName}
+    </delete>
+
+    <delete id="deleteModular">
+
+        delete from modular
+        where modular.course_id =#{courseId}
+        AND modular.modular_name =  #{modularName}
+    </delete>
+
+    <update id="updateModular">
+        update modular
+        set modular_name=#{modularName}
+        where id = #{modularId}
+    </update>
+
+    <update id="updateChapter">
+        update chapter
+        set chapter_name=#{chapterName}
+        where id = #{chapterId}
+    </update>
+
+    <insert id="addCourseWithCM" useGeneratedKeys="true" parameterType="com.javaee.entities.Course" keyProperty="id">
+        insert into course
+        values (null, #{number}, #{credit}, #{type}, #{courseName}, #{mode}, #{createrId}, #{status})
+    </insert>
+
+    <select id="getCourseByStatus" resultMap="BaseResultMap">
+        select *
+        from course
+        <trim prefix="where" prefixOverrides="and" suffix="" suffixOverrides="and">
+            <if test="credit!=null">
+                credit = #{credit} and
+            </if>
+            <if test="type!=null">
+                type = #{type} and
+            </if>
+            status=#{status}
+        </trim>
+        order by id
+        <if test="sort==0">
+            desc
+        </if>
+    </select>
+
+    <select id="getCoursesLikeName" resultMap="BaseResultMap">
+        select *
+        from course
+        <trim prefix="where" prefixOverrides="and" suffix="" suffixOverrides="and">
+            <if test="credit!=null">
+                credit = #{credit} and
+            </if>
+            <if test="type!=null">
+                type = #{type} and
+            </if>
+            course_name like "%"#{courseName}"%"
+        </trim>
+        order by id
+        <if test="sort==0">
+            desc
+        </if>
+    </select>
+
+    <select id="getCoursesWithStatusAndName" resultMap="BaseResultMap">
+        select *
+        from course
+        <trim prefix="where" prefixOverrides="and" suffix="" suffixOverrides="and">
+            <if test="credit!=null">
+                credit = #{credit} and
+            </if>
+            <if test="type!=null">
+                type = #{type} and
+            </if>
+            status = #{status}
+            and course_name like "%"#{courseName}"%"
+        </trim>
+        order by id
+        <if test="sort==0">
+            desc
+        </if>
+    </select>
+
+    <select id="selectWithCts" resultMap="BaseResultMap">
+        select *
+        from course
+        <trim prefix="where" prefixOverrides="and" suffix="" suffixOverrides="and">
+            <if test="credit!=null">
+                credit = #{credit} and
+            </if>
+            <if test="type!=null">
+                type = #{type}
+            </if>
+        </trim>
+        order by id
+        <if test="sort==0">
+            desc
+        </if>
+    </select>
+
+    <update id="updateStatus">
+        update course
+        set status=#{status}
+        where id=#{courseId}
+    </update>
+
+</mapper>
