@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cfs.mapper.PaperMapper">
+
+    <resultMap id="BaseResultMap" type="com.javaee.entities.Paper">
+        <id column="id" property="id"></id>
+        <result column="paper_name" property="paperName"></result>
+        <result column="max_mark" property="maxMark"></result>
+        <result column="creater_id" property="creatorId"></result>
+        <result column="course_id" property="courseId"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="change" property="change"></result>
+    </resultMap>
+
+    <insert id="addPaper" useGeneratedKeys="true" parameterType="com.cfs.entities.Paper" keyProperty="id">
+        insert into paper(paper_name, max_mark, creater_id, course_id, create_time, `change`)
+        VALUES (#{paperName},#{maxMark},#{creatorId},#{courseId},#{createTime},#{change})
+    </insert>
+
+    <insert id="addPaperQuestion">
+        insert into paper_quesion(paper_id, quesion_type, private, quesion_id, mark, quesion_index)
+        VALUES (#{id},#{questionType},#{privateType},#{questionId},#{mark},#{index})
+    </insert>
+
+    <insert id="addPaperPublicSc">
+        insert into paper_quesion(paper_id, quesion_type, private, quesion_id, mark, quesion_index)
+        VALUES (#{id},1,1,#{questionId},#{mark},#{index})
+    </insert>
+
+    <insert id="addPaperPublicComp">
+        insert into paper_quesion(paper_id, quesion_type, private, quesion_id, mark, quesion_index)
+        VALUES (#{id},4,1,#{questionId},#{mark},#{index})
+    </insert>
+
+    <delete id="deletePaper">
+        delete from paper
+        where id= #{id}
+    </delete>
+
+    <delete id="deletePaperQuestion">
+        delete from paper_quesion
+        where paper_id = #{paperId}
+    </delete>
+
+    <update id="updatePaper">
+        update paper
+        set paper_name = #{paperName},
+            max_mark = #{maxMark},
+            course_id = #{courseId},
+            `change` = #{change}
+        where id = #{id}
+    </update>
+
+
+
+    <select id="getPaper" resultType="com.cfs.entities.Paper">
+        select *
+        from paper
+        where id = #{id}
+    </select>
+
+    <select id="getAll" resultMap="BaseResultMap">
+        select *
+        from paper
+    </select>
+
+    <select id="getSum" resultType="java.lang.Integer">
+        select count(*)
+        from <if test="type==1">question_public_sc</if> <if test="type==4">question_public_completion</if>
+        where course_id=#{courseId}
+    </select>
+
+    <select id="getIdList" resultType="java.lang.Integer">
+        select id
+        from <if test="type==1">question_public_sc</if> <if test="type==4">question_public_completion</if>
+        where course_id=#{courseId}
+    </select>
+</mapper>
