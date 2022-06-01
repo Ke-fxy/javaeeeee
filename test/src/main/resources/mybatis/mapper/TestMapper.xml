@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaee.mapper.TestMapper">
+  <resultMap id="BaseResultMap" type="com.javaee.entities.Test">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="text_name" jdbcType="VARCHAR" property="textName" />
+    <result column="creater_id" jdbcType="INTEGER" property="createrId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+    <result column="limit_time" jdbcType="INTEGER" property="limitTime" />
+    <result column="time" jdbcType="INTEGER" property="time" />
+    <result column="place" jdbcType="VARCHAR" property="place" />
+    <result column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="examiner_id" jdbcType="INTEGER" property="examinerId" />
+    <result column="examine" jdbcType="INTEGER" property="examine" />
+    <result column="examine_time" jdbcType="TIMESTAMP" property="examineTime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="Invigilator_id" jdbcType="INTEGER" property="invigilatorId" />
+    <result column="online" jdbcType="INTEGER" property="online" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, text_name, creater_id, create_time, begin_time, limit_time, time, place, course_id, 
+    examiner_id, examine, examine_time, state, Invigilator_id, online
+  </sql>
+  <select id="selectByExample" parameterType="com.javaee.entities.TestExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from test
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from test
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from test
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.javaee.entities.TestExample">
+    delete from test
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.javaee.entities.Test">
+    insert into test (id, text_name, creater_id, 
+      create_time, begin_time, limit_time, 
+      time, place, course_id, 
+      examiner_id, examine, examine_time, 
+      state, Invigilator_id, online
+      )
+    values (#{id,jdbcType=INTEGER}, #{textName,jdbcType=VARCHAR}, #{createrId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{beginTime,jdbcType=TIMESTAMP}, #{limitTime,jdbcType=INTEGER}, 
+      #{time,jdbcType=INTEGER}, #{place,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER}, 
+      #{examinerId,jdbcType=INTEGER}, #{examine,jdbcType=INTEGER}, #{examineTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{invigilatorId,jdbcType=INTEGER}, #{online,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.javaee.entities.Test" keyProperty="id" useGeneratedKeys="true">
+    insert into test
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="textName != null">
+        text_name,
+      </if>
+      <if test="createrId != null">
+        creater_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="beginTime != null">
+        begin_time,
+      </if>
+      <if test="limitTime != null">
+        limit_time,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+      <if test="place != null">
+        place,
+      </if>
+      <if test="courseId != null">
+        course_id,
+      </if>
+      <if test="examinerId != null">
+        examiner_id,
+      </if>
+      <if test="examine != null">
+        examine,
+      </if>
+      <if test="examineTime != null">
+        examine_time,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="invigilatorId != null">
+        Invigilator_id,
+      </if>
+      <if test="online != null">
+        online,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="textName != null">
+        #{textName,jdbcType=VARCHAR},
+      </if>
+      <if test="createrId != null">
+        #{createrId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beginTime != null">
+        #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="limitTime != null">
+        #{limitTime,jdbcType=INTEGER},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=INTEGER},
+      </if>
+      <if test="place != null">
+        #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="courseId != null">
+        #{courseId,jdbcType=INTEGER},
+      </if>
+      <if test="examinerId != null">
+        #{examinerId,jdbcType=INTEGER},
+      </if>
+      <if test="examine != null">
+        #{examine,jdbcType=INTEGER},
+      </if>
+      <if test="examineTime != null">
+        #{examineTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="invigilatorId != null">
+        #{invigilatorId,jdbcType=INTEGER},
+      </if>
+      <if test="online != null">
+        #{online,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.javaee.entities.TestExample" resultType="java.lang.Long">
+    select count(*) from test
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update test
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.textName != null">
+        text_name = #{record.textName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createrId != null">
+        creater_id = #{record.createrId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.beginTime != null">
+        begin_time = #{record.beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.limitTime != null">
+        limit_time = #{record.limitTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.time != null">
+        time = #{record.time,jdbcType=INTEGER},
+      </if>
+      <if test="record.place != null">
+        place = #{record.place,jdbcType=VARCHAR},
+      </if>
+      <if test="record.courseId != null">
+        course_id = #{record.courseId,jdbcType=INTEGER},
+      </if>
+      <if test="record.examinerId != null">
+        examiner_id = #{record.examinerId,jdbcType=INTEGER},
+      </if>
+      <if test="record.examine != null">
+        examine = #{record.examine,jdbcType=INTEGER},
+      </if>
+      <if test="record.examineTime != null">
+        examine_time = #{record.examineTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=INTEGER},
+      </if>
+      <if test="record.invigilatorId != null">
+        Invigilator_id = #{record.invigilatorId,jdbcType=INTEGER},
+      </if>
+      <if test="record.online != null">
+        online = #{record.online,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update test
+    set id = #{record.id,jdbcType=INTEGER},
+      text_name = #{record.textName,jdbcType=VARCHAR},
+      creater_id = #{record.createrId,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      begin_time = #{record.beginTime,jdbcType=TIMESTAMP},
+      limit_time = #{record.limitTime,jdbcType=INTEGER},
+      time = #{record.time,jdbcType=INTEGER},
+      place = #{record.place,jdbcType=VARCHAR},
+      course_id = #{record.courseId,jdbcType=INTEGER},
+      examiner_id = #{record.examinerId,jdbcType=INTEGER},
+      examine = #{record.examine,jdbcType=INTEGER},
+      examine_time = #{record.examineTime,jdbcType=TIMESTAMP},
+      state = #{record.state,jdbcType=INTEGER},
+      Invigilator_id = #{record.invigilatorId,jdbcType=INTEGER},
+      online = #{record.online,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.javaee.entities.Test">
+    update test
+    <set>
+      <if test="textName != null">
+        text_name = #{textName,jdbcType=VARCHAR},
+      </if>
+      <if test="createrId != null">
+        creater_id = #{createrId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beginTime != null">
+        begin_time = #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="limitTime != null">
+        limit_time = #{limitTime,jdbcType=INTEGER},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=INTEGER},
+      </if>
+      <if test="place != null">
+        place = #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="courseId != null">
+        course_id = #{courseId,jdbcType=INTEGER},
+      </if>
+      <if test="examinerId != null">
+        examiner_id = #{examinerId,jdbcType=INTEGER},
+      </if>
+      <if test="examine != null">
+        examine = #{examine,jdbcType=INTEGER},
+      </if>
+      <if test="examineTime != null">
+        examine_time = #{examineTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="invigilatorId != null">
+        Invigilator_id = #{invigilatorId,jdbcType=INTEGER},
+      </if>
+      <if test="online != null">
+        online = #{online,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.javaee.entities.Test">
+    update test
+    set text_name = #{textName,jdbcType=VARCHAR},
+      creater_id = #{createrId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      begin_time = #{beginTime,jdbcType=TIMESTAMP},
+      limit_time = #{limitTime,jdbcType=INTEGER},
+      time = #{time,jdbcType=INTEGER},
+      place = #{place,jdbcType=VARCHAR},
+      course_id = #{courseId,jdbcType=INTEGER},
+      examiner_id = #{examinerId,jdbcType=INTEGER},
+      examine = #{examine,jdbcType=INTEGER},
+      examine_time = #{examineTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      Invigilator_id = #{invigilatorId,jdbcType=INTEGER},
+      online = #{online,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insertWithPaper">
+    insert into test_paper
+    values(null,#{testId},#{paperId})
+  </insert>
+
+
+</mapper>

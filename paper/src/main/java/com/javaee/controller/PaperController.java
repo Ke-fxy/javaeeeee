@@ -138,7 +138,7 @@ public class PaperController {
         }
     }
 
-    @PostMapping ("/getAllPaper")
+    @PostMapping("/getAllPaper")
     public CommonResult<Object> getAllPaper(@RequestBody HashMap<String, Object> map) {
         String token = (String) map.get("token");
         String checkup = checkup(token);
@@ -196,20 +196,21 @@ public class PaperController {
         Integer comScore = null;
         Integer courseId = null;
         Integer paperId = null;
+
         try {
-            choiceNum = (Integer) map.get("choiceNum");
-            choiceScore = (Integer) map.get("choiceScore");
-            comNum = (Integer) map.get("comNum");
-            comScore = (Integer) map.get("comScore");
-            courseId = (Integer) map.get("courseId");
-            paperId = (Integer) map.get("paperId");
+            choiceNum = Integer.parseInt((String) map.get("choiceNum"));
+            choiceScore = Integer.parseInt((String) map.get("choiceScore"));
+            comNum = Integer.parseInt((String) map.get("comNum"));
+            comScore = Integer.parseInt((String) map.get("comScore"));
+            courseId = Integer.parseInt((String) map.get("courseId"));
+            paperId = Integer.parseInt((String) map.get("paperId"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        paperService.addPaperQuestionAuto(choiceNum, choiceScore, comNum, comScore, courseId,paperId);
+        paperService.addPaperQuestionAuto(choiceNum, choiceScore, comNum, comScore, courseId, paperId);
 
-        return new CommonResult<>(100,"添加成功");
+        return new CommonResult<>(100, "添加成功");
 
     }
 

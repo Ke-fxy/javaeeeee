@@ -18,6 +18,7 @@
         <module>common</module>
         <module>face</module>
         <module>api-gateway</module>
+        <module>test</module>
     </modules>
 
     <!--统一管理jar包版本-->

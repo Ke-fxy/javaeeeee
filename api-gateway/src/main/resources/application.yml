@@ -18,13 +18,13 @@ spring:
           uri: lb://service-user
           order: 1
           predicates:
-            - Path=/user-serv/**
+            - Path=/user/**
           filters:
             - StripPrefix=1
-        - id: product-route
-          uri: lb://service-product
+        - id: course-route
+          uri: lb://service-course
           order: 1
           predicates:
-            - Path=/product-serv/**
+            - Path=/course/**
           filters:
             - StripPrefix=1
