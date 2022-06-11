@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -27,6 +24,7 @@ import java.util.HashMap;
 @RestController
 @Slf4j
 @RequestMapping(value = "/face")
+@CrossOrigin(maxAge = 3600,value = "*")
 public class FaceController {
 
     @Resource

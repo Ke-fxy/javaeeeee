@@ -1,13 +1,12 @@
 package com.javaee.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.javaee.entities.CommonResult;
 import com.javaee.entities.Student;
 import com.javaee.service.StudentService;
+import com.javaee.util.JavaWebToken;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -21,7 +20,8 @@ import java.util.Map;
  */
 @RestController
 @Slf4j
-@RequestMapping("/student")
+@RequestMapping("/user/student")
+@CrossOrigin(maxAge = 3600,value = "*")
 public class StudentController {
 
     @Resource
@@ -90,35 +90,11 @@ public class StudentController {
         System.out.println("token:" + token);
 
 
-//        String token = (String) map.get("token");
-//        //"data": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MX0.xxzv08P4YGKnWdyIqVCOaFFQQr7kjQKa1L3BhlrdA48"
-//        String checkResult = studentService.checkup(token);
-//
-//        if (checkResult==null){
-//            return new CommonResult(200,"用户未登录或登录状态失效");
-//        }
-//
-//        String oldPassword = (String) map.get("oldPassword");
-//        String newPassword = (String) map.get("newPassword");
-//        Boolean flag = studentService.checkPwd(token,oldPassword);
-//
-//        String result = "";
-//        if (flag){
-//
-//            studentService.deleteToken(token);
-//            result = studentService.updatePassword(token,newPassword);
-
-//        }
-//
-//
-//        if(result.equals("AC")){
-//            return new CommonResult(100,"修改成功",checkResult);
-//        }else {
-//            return new CommonResult(200,"修改失败",checkResult);
 //        }
         return new CommonResult(200, "修改失败");
 
     }
+
 
     @PostMapping(value = "updateStudentRole")
     public CommonResult<String> updateStudentRole(@RequestBody HashMap<String, String> map) {
@@ -144,5 +120,70 @@ public class StudentController {
 
     }
 
+    @PostMapping(value = "/getStudent")
+    public CommonResult<Student> getStudent(@RequestBody HashMap<String,String> map){
+
+        String token = map.get("token");
+        String checkup = studentService.checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效", null);
+        }
+        Integer id = Integer.parseInt(checkup);
+        Student student = studentService.getById(id);
+
+        return student != null ? new CommonResult<>(100,"获取学生信息成功",student):new CommonResult<>(200,"获取学生信息失败");
+
+    }
+    @PostMapping(value = "/delete")
+    public CommonResult<String> delete(@RequestBody HashMap<String,String> map){
+
+        String token = map.get("token");
+        String checkup = studentService.checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效", null);
+        }
+
+        Integer result = studentService.delete(Integer.parseInt(map.get("id")));
+
+        return result > 0 ? new CommonResult<>(100,"删除成功"):new CommonResult<>(200,"删除失败");
+
+    }
+
+
+    @PostMapping(value = "/getAllStudent")
+    public CommonResult<PageInfo<Student>> getAllStudent(@RequestBody HashMap<String,String> map){
+
+        String token = map.get("token");
+        String checkup = studentService.checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效", null);
+        }
+
+        PageInfo<Student> studentList = studentService.getAll(map.get("numStr"),map.get("nameStr"),map.get("limit"),map.get("page"));
+
+        return studentList != null ? new CommonResult<>(100,"获取学生列表成功",studentList):new CommonResult<>(200,"获取学生列表失败");
+
+    }
+
+    @PostMapping(value = "/getAllStudentByTeacherId")
+    public CommonResult<PageInfo<Student>> getAllStudentByTeacherId(@RequestBody HashMap<String,String> map){
+
+        String token = map.get("token");
+        String checkup = studentService.checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效", null);
+        }
+        Map<String, Object> webToken = JavaWebToken.parserJavaWebToken(token);
+        Integer id = (Integer) webToken.get("id");
+
+        PageInfo<Student> studentList = studentService.getAllStudentByTeacherId(id,map.get("numStr"),map.get("nameStr"),map.get("limit"),map.get("page"));
+
+        return studentList != null ? new CommonResult<>(100,"获取学生列表成功",studentList):new CommonResult<>(200,"获取学生列表失败");
+
+    }
 
 }

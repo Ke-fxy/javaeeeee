@@ -1,10 +1,8 @@
 package com.javaee.mapper;
 
-
-import com.javaee.entities.Paper;
+import com.javaee.entities.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -12,6 +10,17 @@ import java.util.List;
 public interface PaperMapper {
 
     Integer addPaper(Paper paper);
+
+    Integer submitPaper(@Param("paperId") Integer paperId,
+                        @Param("questionIndex") Integer questionIndex,
+                        @Param("result") String result,
+                        @Param("studentId") Integer studentId,
+                        @Param("score") Integer score,
+                        @Param("fullMark") Integer fullMark,
+                        @Param("questionId") Integer questionId,
+                        @Param("questionType") Integer questionType);
+
+    List<SubmitPaper> getPaperTested();
 
     Integer addPaperPublicSc(
             @Param("id") Integer id,
@@ -46,17 +55,23 @@ public interface PaperMapper {
 
     Paper getPaper(@Param("id") Integer id);
 
+    Integer insertTested(@Param("testId") Integer testId,
+                         @Param("studentId") Integer studentId);
+
     List<Paper> getAll();
+    List<Paper> getAllByCourseId(@Param("courseId") Integer courseId);
 
     Integer getSum(@Param("courseId") Integer courseId,
                    @Param("type") int type);
 
-    List<Integer> getIdList(@Param("type") int type,
-                            @Param("courseId") Integer courseId);
+    List<PaperAndQuestion> getPaperQuestion(@Param("paperId") Integer paperId);
+    List<PaperAndQuestionTested> getQuestionTestedByPaperId(@Param("id") Integer id);
+    List<PaperAndQuestionTestedCorrect> getQuestionTestedCorrectByPaperId(@Param("id") Integer id);
 
-    @Select("select name from teacher where id=#{id}")
-    String getCreaterName(@Param("id") Integer creatorId);
+    List<QuestionPublicSc> getQuestionByPaperId(@Param("id") Integer id);
 
-    @Select("select course_name from course where id=#{id}")
-    String getCourseName(@Param("id") Integer courseId);
+    Integer updateScore(@Param("score") Integer score,
+                        @Param("paperId") Integer paperId,
+                        @Param("studentId") Integer studentId,
+                        @Param("questionId") Integer questionId);
 }

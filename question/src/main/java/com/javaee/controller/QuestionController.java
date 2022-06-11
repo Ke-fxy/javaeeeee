@@ -1,23 +1,20 @@
 package com.javaee.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.javaee.entities.CommonResult;
-import com.javaee.entities.QuestionEntity;
-import com.javaee.entities.QuestionPublicComp;
-import com.javaee.entities.QuestionPublicSc;
+import com.javaee.entities.*;
 import com.javaee.service.QuestionService;
 import com.javaee.util.JavaWebToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +27,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/question")
+@CrossOrigin(maxAge = 3600,value = "*")
 public class QuestionController {
 
     @Resource
@@ -483,6 +481,56 @@ public class QuestionController {
 
     }
 
+    @PostMapping(value = "/addPaperQuestion")
+    public CommonResult<String> addPaperQuestion(@RequestBody HashMap<String, Object> map) {
+        System.out.println("map = " + map);
+        String token = (String) map.get("token");
+        String checkup = checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效");
+        }
+
+        Integer paperId = Integer.parseInt(map.get("paperId").toString());
+
+        List<PaperQuestion> paperQuestionList2= new ArrayList<>();
+
+        List<PaperQuestion> paperQuestionList = (List<PaperQuestion>)map.get("questionList");
+//遍历list
+        for(Object object:paperQuestionList){
+            // 将list中的数据转成json字符串
+            String jsonObject= JSON.toJSONString(object);
+            //将json转成需要的对象
+            PaperQuestion paperQuestion= JSONObject.parseObject(jsonObject,PaperQuestion.class);
+            paperQuestionList2.add(paperQuestion);
+//            System.out.println(courseInfo);
+        }
+
+        Integer questionType = null;
+        Integer questionId = null;
+        Integer mark = null;
+        Integer questionIndex = null;
+        Integer privateQ = null;
+        Integer result=1;
+        System.out.println("paperQuestionList2 = " + paperQuestionList2);
+        for (int i = 0; i < paperQuestionList2.size(); i++) {
+            questionType = Integer.parseInt(paperQuestionList2.get(i).getQuestionType());
+            questionId = paperQuestionList2.get(i).getQuestionId();
+            mark = paperQuestionList2.get(i).getMark();
+            questionIndex = paperQuestionList2.get(i).getQuestionIndex();
+            privateQ = paperQuestionList2.get(i).getPrivateQ();
+            result = questionService.addPaperQuestion(paperId,questionType,questionId,mark,questionIndex,privateQ) * result;
+        }
+
+        if (result > 0){
+            return new CommonResult<>(100,"查询成功");
+        }else {
+            return new CommonResult<>(200,"查询失败");
+        }
+
+    }
+
+
     @PostMapping(value = "/getQuestionEntity")
     public CommonResult<List<QuestionEntity>> getQuestionEntity(@RequestBody HashMap<String, Object> map) {
 
@@ -493,11 +541,11 @@ public class QuestionController {
             return new CommonResult<>(200, "用户未登录或登录状态失效");
         }
         Integer type = null;
-        List<Integer> questionIdList = null;
+        int[] questionIdList;
 
         try {
             type = (Integer) map.get("type");
-            questionIdList = (List<Integer>) map.get("questionIdList");
+            questionIdList = (int[]) map.get("questionIdList");
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult<>(200, "数据传输错误");
@@ -510,6 +558,22 @@ public class QuestionController {
         }else {
             return new CommonResult<>(200,"查询失败");
         }
+
+    }
+
+    @PostMapping(value = "/getAllQuestionNotApproved")
+    public CommonResult<Object> getAllQuestionNotApproved(@RequestBody HashMap<String, String> map) {
+
+        String token = map.get("token");
+        String checkup =checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效", null);
+        }
+
+        PageInfo<Student> studentList = questionService.getAllNotApproved(map.get("type"),map.get("limit"),map.get("page"));
+
+        return studentList != null ? new CommonResult<>(100,"获取题目列表成功",studentList):new CommonResult<>(200,"获取题目列表失败");
 
     }
 

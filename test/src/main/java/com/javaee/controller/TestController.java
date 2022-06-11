@@ -1,5 +1,6 @@
 package com.javaee.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.javaee.entities.CommonResult;
 import com.javaee.entities.Test;
 import com.javaee.service.TestService;
@@ -25,7 +26,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/test")
-@CrossOrigin(value = "*", maxAge = 3600)
+@CrossOrigin(maxAge = 3600,value = "*")
 public class TestController {
 
     @Resource
@@ -67,14 +68,14 @@ public class TestController {
 
         try {
             testName = String.valueOf(map.get("testName"));
-            paperId = (Integer) map.get("paperId");
+            paperId = Integer.parseInt(map.get("paperId").toString());
             beginTime = String.valueOf(map.get("beginTime"));
-            limitTime = (Integer) map.get("limitTime");
-            time = (Integer) map.get("time");
-            place = String.valueOf(map.get("place"));
-            courseId = (Integer) map.get("courseId");
-            invigilatorId = (Integer) map.get("invigilatorId");
-            online = (Integer) map.get("online");
+            limitTime = Integer.parseInt(map.get("limitTime").toString());
+//            time = (Integer) map.get("time");
+//            place = String.valueOf(map.get("place"));
+            courseId = Integer.parseInt(map.get("courseId").toString());
+//            invigilatorId = (Integer) map.get("invigilatorId");
+//            online = (Integer) map.get("online");
         } catch (Exception e) {
             return new CommonResult<>(200, "参数添加失败");
         }
@@ -89,7 +90,7 @@ public class TestController {
             return new CommonResult<>(200,"时间格式错误");
         }
 
-        Test test = new Test(null, testName, Integer.parseInt(checkup), new Timestamp(System.currentTimeMillis()), timestamp, limitTime, time, place, courseId, null, null, null, null, invigilatorId, online);
+        Test test = new Test(null, testName, Integer.parseInt(checkup), paperId, new Timestamp(System.currentTimeMillis()), timestamp, limitTime, time, place, courseId, null, null, null, null, invigilatorId, online);
         boolean b = testService.addTest(test, paperId);
 
         if (b) {
@@ -141,7 +142,7 @@ public class TestController {
 
         Integer id = null;
         String testName = null;
-        //Integer paperId = null;
+        Integer paperId = null;
         String beginTime = null;
         Integer limitTime = null;
         Integer time = null;
@@ -158,6 +159,7 @@ public class TestController {
             limitTime = (Integer) map.get("limitTime");
             time = (Integer) map.get("time");
             place = String.valueOf(map.get("place"));
+            paperId = (Integer) map.get("paperId");
             courseId = (Integer) map.get("courseId");
             invigilatorId = (Integer) map.get("invigilatorId");
             online = (Integer) map.get("online");
@@ -174,7 +176,7 @@ public class TestController {
             e.printStackTrace();
         }
 
-        Test test = new Test(id, testName, Integer.parseInt(checkup), new Timestamp(System.currentTimeMillis()), datetime, limitTime, time, place, courseId, null, null, null, null, invigilatorId, online);
+        Test test = new Test(id, testName, Integer.parseInt(checkup), paperId,new Timestamp(System.currentTimeMillis()), datetime, limitTime, time, place, courseId, null, null, null, null, invigilatorId, online);
         boolean b = testService.updateTest(test);
 
         if (b) {
@@ -225,6 +227,79 @@ public class TestController {
         }
 
         List<Test> allTest = testService.getAllTest();
+
+        if (allTest != null) {
+            return new CommonResult<>(100, "查询成功", allTest);
+        } else {
+            return new CommonResult<>(200, "查询失败");
+        }
+
+    }
+
+    @PostMapping(value = "/getAllTestByCourseIdTimeOut")
+    public CommonResult<Object> getAllTestByCourseIdTimeOut(@RequestBody HashMap<String, String> map) {
+
+        String token = String.valueOf(map.get("token"));
+        String checkup = checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效", null);
+        }
+        Integer id = Integer.parseInt(checkup);
+
+        Integer pageNum = Integer.parseInt(map.get("pageNum"));
+        Integer pageSize = Integer.parseInt(map.get("pageSize"));
+
+        PageInfo<Test> allTest = testService.getAllTestByCourseIdTimeOut(id,pageNum, pageSize);
+
+        if (allTest != null) {
+            return new CommonResult<>(100, "查询成功", allTest);
+        } else {
+            return new CommonResult<>(200, "查询失败");
+        }
+
+    }
+
+    @PostMapping(value = "/getAllTestByCourseIdAfter")
+    public CommonResult<Object> getAllTestByCourseIdAfter(@RequestBody HashMap<String, String> map) {
+
+        String token = String.valueOf(map.get("token"));
+        String checkup = checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效", null);
+        }
+        Integer id = Integer.parseInt(checkup);
+        System.out.println(id);
+
+        Integer pageNum = Integer.parseInt(map.get("pageNum"));
+        Integer pageSize = Integer.parseInt(map.get("pageSize"));
+
+        PageInfo<Test> allTest = testService.getAllTestByCourseIdAfter(id,pageNum, pageSize);
+
+        if (allTest != null) {
+            return new CommonResult<>(100, "查询成功", allTest);
+        } else {
+            return new CommonResult<>(200, "查询失败");
+        }
+
+    }
+
+    @PostMapping(value = "/getAllTestByCourseId")
+    public CommonResult<Object> getAllTestByCourseId(@RequestBody HashMap<String, String> map) {
+
+        String token = String.valueOf(map.get("token"));
+        String checkup = checkup(token);
+
+        if (checkup == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效", null);
+        }
+        Integer id = Integer.parseInt(checkup);
+
+        Integer pageNum = Integer.parseInt(map.get("pageNum"));
+        Integer pageSize = Integer.parseInt(map.get("pageSize"));
+
+        PageInfo<Test> allTest = testService.getAllTestByCourseId(id,pageNum, pageSize);
 
         if (allTest != null) {
             return new CommonResult<>(100, "查询成功", allTest);

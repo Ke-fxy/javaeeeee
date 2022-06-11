@@ -15,7 +15,7 @@ spring:
     lettuce:
       shutdown-timeout: 0
   application:
-    name: face
+    name: test
   cloud:
     nacos:
       discovery:

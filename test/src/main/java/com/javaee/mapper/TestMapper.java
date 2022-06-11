@@ -9,6 +9,12 @@ import java.util.List;
 
 @Mapper
 public interface TestMapper {
+
+    List<Test> getAllTestByCourseId(@Param("id") Integer id);
+    List<Test> getAllTestByCourseIdTimeOut(@Param("id") Integer id);
+    List<Test> getAllTestByCourseIdAfter(@Param("id") Integer id);
+    List<Test> getAllTested(@Param("id") Integer id);
+
     long countByExample(TestExample example);
 
     int deleteByExample(TestExample example);

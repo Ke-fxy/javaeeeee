@@ -1,5 +1,7 @@
 package com.javaee.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.javaee.entities.*;
 import com.javaee.mapper.QuestionMapper;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,29 @@ public class QuestionService {
 
         return questionPublicSc;
 
+    }
+
+    public List<QuestionPublicSc> getQuestionByPaperId(Integer id){
+        return questionMapper.getQuestionByPaperId(id);
+    }
+
+    public List<PaperAndQuestion> getPaperQuestion(Integer paperId){
+//        System.out.println("questionMapper.getPaperQuestion(paperId):"+questionMapper.getPaperQuestion(paperId));
+        return questionMapper.getPaperQuestion(paperId);
+    }
+
+    public List<PaperAndQuestionTested> getPaperQuestionTested(Integer paperId){
+//        System.out.println("questionMapper.getPaperQuestion(paperId):"+questionMapper.getPaperQuestion(paperId));
+        return questionMapper.getQuestionTestedByPaperId(paperId);
+    }
+
+    public List<PaperAndQuestionTestedCorrect> getQuestionTestedCorrectByPaperId(Integer paperId){
+//        System.out.println("questionMapper.getPaperQuestion(paperId):"+questionMapper.getPaperQuestion(paperId));
+        return questionMapper.getQuestionTestedCorrectByPaperId(paperId);
+    }
+
+    public Integer updateScore(Integer score,Integer paperId,Integer studentId,Integer questionId){
+        return questionMapper.updateScore(score, paperId, studentId, questionId);
     }
 
     public List<QuestionPublicSc> getAllSC() {
@@ -210,14 +235,20 @@ public class QuestionService {
 
     }
 
-    public List<QuestionEntity> getQuestionEntity(Integer type, List<Integer> answerIdList) {
+    public Integer addPaperQuestion(Integer paperId,Integer questionType,Integer questionId,
+                                    Integer mark,Integer questionIndex,Integer privateQ){
+        return questionMapper.addPaperQuestion(paperId, questionType, questionId, mark, questionIndex, privateQ);
+
+    }
+
+    public List<QuestionEntity> getQuestionEntity(Integer type, int[] answerIdList) {
 
         List<QuestionEntity> questionEntities = new ArrayList<>();
 
         //选择题
         if(type==1){
-            for (int i = 0; i < answerIdList.size(); i++) {
-                QuestionPublicSc questionPublicSc = questionMapper.get(answerIdList.get(i));
+            for (int i = 0; i < answerIdList.length; i++) {
+                QuestionPublicSc questionPublicSc = questionMapper.get(answerIdList[i]);
                 ArrayList<Answer> answers = new ArrayList<>();
                 answers.add(new Answer("A",questionPublicSc.getOption1()));
                 answers.add(new Answer("B",questionPublicSc.getOption2()));
@@ -229,8 +260,8 @@ public class QuestionService {
                 questionEntities.add(questionEntity);
             }
         }else if (type==4){
-            for (int i = 0; i < answerIdList.size(); i++) {
-                QuestionPublicComp questionPublicComp = questionMapper.getComp(answerIdList.get(i));
+            for (int i = 0; i < answerIdList.length; i++) {
+                QuestionPublicComp questionPublicComp = questionMapper.getComp(answerIdList[i]);
                 ArrayList<Answer> answers = new ArrayList<>();
                 ArrayList<String> correct = new ArrayList<>();
                 correct.add(questionPublicComp.getAnswer1());
@@ -243,4 +274,27 @@ public class QuestionService {
 
         return questionEntities;
     }
+
+    public PageInfo getAllNotApproved(String type, String limit, String page ) {
+
+        List<QuestionPublicScWithName> questionScInCondition = null;
+        List<QuestionPublicCompWithName> questionCompInCondition = null;
+        Integer pageNum = Integer.parseInt(page);
+        Integer pageSize = Integer.parseInt(limit);
+        PageHelper.startPage(pageNum, pageSize);
+
+        if ("0".equals(type)){
+            questionScInCondition = questionMapper.getQuestionSc();
+            PageInfo<QuestionPublicScWithName> pageInfo = new PageInfo<>(questionScInCondition);
+            return pageInfo;
+
+        }else {
+            questionCompInCondition = questionMapper.getQuestionComp();
+            PageInfo<QuestionPublicCompWithName> pageInfo = new PageInfo<>(questionCompInCondition);
+            return pageInfo;
+
+        }
+
+    }
+
 }

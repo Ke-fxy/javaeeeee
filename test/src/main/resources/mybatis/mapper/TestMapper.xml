@@ -18,6 +18,57 @@
     <result column="Invigilator_id" jdbcType="INTEGER" property="invigilatorId" />
     <result column="online" jdbcType="INTEGER" property="online" />
   </resultMap>
+<!--  <select id="getAllTestByCourseId" resultMap="BaseResultMap">-->
+<!--    select *-->
+<!--    from test-->
+<!--    where course_id in (-->
+<!--      select course_id-->
+<!--      from course_teacher_stu-->
+<!--      where student_id = #{id}-->
+<!--    )-->
+<!--  </select>-->
+  <select id="getAllTestByCourseId" resultMap="BaseResultMap">
+    select *
+    from test
+    where test.course_id in (
+      select course_teacher_stu.course_id
+      from course_teacher_stu
+      where student_id = #{id}
+    ) and timestampdiff(MINUTE,test.begin_time,now())&lt;=test.limit_time
+      and timestampdiff(MINUTE,test.begin_time,now())&gt;0
+  </select>
+  <select id="getAllTestByCourseIdTimeOut" resultMap="BaseResultMap">
+    select *
+    from test
+    where test.course_id in (
+      select course_teacher_stu.course_id
+      from course_teacher_stu
+      where student_id = #{id}
+    ) and timestampdiff(MINUTE,test.begin_time,now()) &gt;= test.limit_time
+  </select>
+  <select id="getAllTested" resultMap="BaseResultMap">
+    select *
+    from test
+    where test.id in (
+      select test_student.testId
+      from test_student
+      where studentId = #{id}
+    ) and timestampdiff(MINUTE,test.begin_time,now()) &lt;= test.limit_time
+      and timestampdiff(MINUTE,test.begin_time,now()) &gt; 0
+  </select>
+  <select id="getAllTestByCourseIdAfter" resultMap="BaseResultMap">
+    select *
+    from test
+    where test.course_id in (
+      select course_teacher_stu.course_id
+      from course_teacher_stu
+      where student_id = #{id}
+    ) and timestampdiff(MINUTE,test.begin_time,now()) &lt; 0
+  </select>
+
+<!--  <select id="getTimeOut" resultMap="BaseResultMap">-->
+<!--    select timestampdiff(MINUTE,now(),test.begin_time) &lt; test.limit_time-->
+<!--  </select>-->
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -77,7 +128,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, text_name, creater_id, create_time, begin_time, limit_time, time, place, course_id, 
+    id, text_name, creater_id, create_time, begin_time, limit_time, time, place, course_id,
     examiner_id, examine, examine_time, state, Invigilator_id, online
   </sql>
   <select id="selectByExample" parameterType="com.javaee.entities.TestExample" resultMap="BaseResultMap">
@@ -95,7 +146,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from test
     where id = #{id,jdbcType=INTEGER}
@@ -111,115 +162,122 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.javaee.entities.Test">
-    insert into test (id, text_name, creater_id, 
-      create_time, begin_time, limit_time, 
-      time, place, course_id, 
-      examiner_id, examine, examine_time, 
-      state, Invigilator_id, online
+    insert into test (id, text_name, creater_id,
+      create_time, begin_time, limit_time,
+      time, place, course_id,
+      examiner_id, examine, examine_time,
+      state, Invigilator_id, online,paper_id
       )
-    values (#{id,jdbcType=INTEGER}, #{textName,jdbcType=VARCHAR}, #{createrId,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{beginTime,jdbcType=TIMESTAMP}, #{limitTime,jdbcType=INTEGER}, 
-      #{time,jdbcType=INTEGER}, #{place,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER}, 
-      #{examinerId,jdbcType=INTEGER}, #{examine,jdbcType=INTEGER}, #{examineTime,jdbcType=TIMESTAMP}, 
-      #{state,jdbcType=INTEGER}, #{invigilatorId,jdbcType=INTEGER}, #{online,jdbcType=INTEGER}
+    values (#{id,jdbcType=INTEGER}, #{textName,jdbcType=VARCHAR}, #{createrId,jdbcType=INTEGER},
+      #{createTime,jdbcType=TIMESTAMP}, #{beginTime,jdbcType=TIMESTAMP}, #{limitTime,jdbcType=INTEGER},
+      #{time,jdbcType=INTEGER}, #{place,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER},
+      #{examinerId,jdbcType=INTEGER}, #{examine,jdbcType=INTEGER}, #{examineTime,jdbcType=TIMESTAMP},
+      #{state,jdbcType=INTEGER}, #{invigilatorId,jdbcType=INTEGER}, #{online,jdbcType=INTEGER},
+      #{paperId,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.javaee.entities.Test" keyProperty="id" useGeneratedKeys="true">
-    insert into test
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="textName != null">
-        text_name,
-      </if>
-      <if test="createrId != null">
-        creater_id,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="beginTime != null">
-        begin_time,
-      </if>
-      <if test="limitTime != null">
-        limit_time,
-      </if>
-      <if test="time != null">
-        time,
-      </if>
-      <if test="place != null">
-        place,
-      </if>
-      <if test="courseId != null">
-        course_id,
-      </if>
-      <if test="examinerId != null">
-        examiner_id,
-      </if>
-      <if test="examine != null">
-        examine,
-      </if>
-      <if test="examineTime != null">
-        examine_time,
-      </if>
-      <if test="state != null">
-        state,
-      </if>
-      <if test="invigilatorId != null">
-        Invigilator_id,
-      </if>
-      <if test="online != null">
-        online,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="textName != null">
-        #{textName,jdbcType=VARCHAR},
-      </if>
-      <if test="createrId != null">
-        #{createrId,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="beginTime != null">
-        #{beginTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="limitTime != null">
-        #{limitTime,jdbcType=INTEGER},
-      </if>
-      <if test="time != null">
-        #{time,jdbcType=INTEGER},
-      </if>
-      <if test="place != null">
-        #{place,jdbcType=VARCHAR},
-      </if>
-      <if test="courseId != null">
-        #{courseId,jdbcType=INTEGER},
-      </if>
-      <if test="examinerId != null">
-        #{examinerId,jdbcType=INTEGER},
-      </if>
-      <if test="examine != null">
-        #{examine,jdbcType=INTEGER},
-      </if>
-      <if test="examineTime != null">
-        #{examineTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="state != null">
-        #{state,jdbcType=INTEGER},
-      </if>
-      <if test="invigilatorId != null">
-        #{invigilatorId,jdbcType=INTEGER},
-      </if>
-      <if test="online != null">
-        #{online,jdbcType=INTEGER},
-      </if>
-    </trim>
+    insert into test( text_name, paper_id, creater_id, create_time, begin_time, limit_time, time, place, course_id, examiner_id, examine, examine_time, state, Invigilator_id, online)
+    VALUES (#{textName},#{paperId},#{createrId},#{createTime},#{beginTime},#{limitTime},#{time},#{place},#{courseId},#{examinerId},#{examine},#{examineTime},#{state},#{invigilatorId},#{online})
+
+
+<!--    <trim prefix="(" suffix=")" suffixOverrides=",">-->
+<!--      <if test="id != null">-->
+<!--        id,-->
+<!--      </if>-->
+<!--      <if test="textName != null">-->
+<!--        text_name,-->
+<!--      </if>-->
+<!--      <if test="createrId != null">-->
+<!--        creater_id,-->
+<!--      </if>-->
+<!--      <if test="createTime != null">-->
+<!--        create_time,-->
+<!--      </if>-->
+<!--      <if test="beginTime != null">-->
+<!--        begin_time,-->
+<!--      </if>-->
+<!--      <if test="limitTime != null">-->
+<!--        limit_time,-->
+<!--      </if>-->
+<!--      <if test="time != null">-->
+<!--        time,-->
+<!--      </if>-->
+<!--      <if test="place != null">-->
+<!--        place,-->
+<!--      </if>-->
+<!--      <if test="courseId != null">-->
+<!--        course_id,-->
+<!--      </if>-->
+<!--      <if test="examinerId != null">-->
+<!--        examiner_id,-->
+<!--      </if>-->
+<!--      <if test="examine != null">-->
+<!--        examine,-->
+<!--      </if>-->
+<!--      <if test="examineTime != null">-->
+<!--        examine_time,-->
+<!--      </if>-->
+<!--      <if test="state != null">-->
+<!--        state,-->
+<!--      </if>-->
+<!--      <if test="invigilatorId != null">-->
+<!--        Invigilator_id,-->
+<!--      </if>-->
+<!--      <if test="online != null">-->
+<!--        online,-->
+<!--      </if>-->
+<!--      <if test="paperId != null">-->
+<!--        paper_id,-->
+<!--      </if>-->
+<!--    </trim>-->
+<!--    <trim prefix="values (" suffix=")" suffixOverrides=",">-->
+<!--      <if test="id != null">-->
+<!--        #{id,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="textName != null">-->
+<!--        #{textName,jdbcType=VARCHAR},-->
+<!--      </if>-->
+<!--      <if test="createrId != null">-->
+<!--        #{createrId,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="createTime != null">-->
+<!--        #{createTime,jdbcType=TIMESTAMP},-->
+<!--      </if>-->
+<!--      <if test="beginTime != null">-->
+<!--        #{beginTime,jdbcType=TIMESTAMP},-->
+<!--      </if>-->
+<!--      <if test="limitTime != null">-->
+<!--        #{limitTime,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="time != null">-->
+<!--        #{time,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="place != null">-->
+<!--        #{place,jdbcType=VARCHAR},-->
+<!--      </if>-->
+<!--      <if test="courseId != null">-->
+<!--        #{courseId,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="examinerId != null">-->
+<!--        #{examinerId,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="examine != null">-->
+<!--        #{examine,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="examineTime != null">-->
+<!--        #{examineTime,jdbcType=TIMESTAMP},-->
+<!--      </if>-->
+<!--      <if test="state != null">-->
+<!--        #{state,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="invigilatorId != null">-->
+<!--        #{invigilatorId,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="online != null">-->
+<!--        #{online,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--    </trim>-->
   </insert>
   <select id="countByExample" parameterType="com.javaee.entities.TestExample" resultType="java.lang.Long">
     select count(*) from test

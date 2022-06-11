@@ -35,4 +35,42 @@ public interface StudentMapper {
 
     Integer updateRole(@Param("studentId") Integer teacherId,
                        @Param("role") Integer role);
+
+    /**
+     * create by: Chalksyy
+     * description: 删除学生
+     * create time: 2022/5/19 19:51
+     * @return
+     */
+    Integer delete(@Param("id") Integer id);
+
+    /**
+     * create by: Chalksyy
+     * description: 根据学号获取id
+     * create time: 2022/6/4 15:50
+     * @return
+     */
+    Integer getIdBySno(@Param("sno") Integer sno);
+
+    /**
+     * create by: Chalksyy
+     * description: 通过id获取学生信息
+     * create time: 2022/5/19 17:46
+     * @return
+     */
+    Student getById(@Param("id") Integer id);
+
+    List<Student> getAll(@Param("numStr") String numStr,
+                         @Param("nameStr") String nameStr);
+
+    List<Student> getAllByTeacherId(@Param("id") Integer id,
+                                    @Param("numStr") String numStr,
+                                    @Param("nameStr") String nameStr);
+
+    Integer update(@Param("id") Integer id,
+                   @Param("sno") Integer sno,
+                   @Param("name") String name,
+                   @Param("phone") String phone,
+                   @Param("password") String password,
+                   @Param("gender") Integer gender);
 }

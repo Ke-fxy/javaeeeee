@@ -82,6 +82,39 @@
         <result column="modular_name" property="modularName"></result>
     </resultMap>
 
+    <resultMap id="paperAndQuestionMap" type="com.javaee.entities.PaperAndQuestion">
+        <id column="id" property="id"></id>
+        <result column="paper_id" property="paperId"></result>
+        <result column="quesion_type" property="questionType"></result>
+        <result column="quesion_id" property="questionId"></result>
+        <result column="mark" property="mark"></result>
+        <result column="quesion_index" property="questionIndex"></result>
+        <result column="private" property="privateQ"></result>
+    </resultMap>
+
+    <resultMap id="paperAndQuestionTestedMap" type="com.javaee.entities.PaperAndQuestionTested">
+        <id column="id" property="id"></id>
+        <result column="paper_id" property="paperId"></result>
+        <result column="quesion_type" property="questionType"></result>
+        <result column="quesion_id" property="questionId"></result>
+        <result column="full_mark" property="mark"></result>
+        <result column="quesion_index" property="questionIndex"></result>
+        <result column="private" property="privateQ"></result>
+        <result column="result" property="result"></result>
+    </resultMap>
+
+    <resultMap id="paperAndQuestionTestedCorrectMap" type="com.javaee.entities.PaperAndQuestionTestedCorrect">
+        <id column="id" property="id"></id>
+        <result column="paper_id" property="paperId"></result>
+        <result column="quesion_index" property="questionIndex"></result>
+        <result column="result" property="result"></result>
+        <result column="student_id" property="studentId"></result>
+        <result column="score" property="score"></result>
+        <result column="full_mark" property="fullMark"></result>
+        <result column="quesion_id" property="questionId"></result>
+        <result column="quesion_type" property="questionType"></result>
+    </resultMap>
+
     <insert id="insert">
         insert into question_public_sc(id, text, option1, option2, option3, option4, answer, creater_id, create_time,
                                        chapter_id, modular_id, diffculyt, examine, examiner_id, examine_time, type)
@@ -89,11 +122,65 @@
                 #{chapterId}, #{modularId}, #{diffculyt}, null, null, null, 0)
     </insert>
 
+    <update id="updateScore">
+        update finished_question
+        set score = #{score}
+        where paper_id = #{paperId} and student_id = #{studentId} and question_id = #{questionId}
+    </update>
+
     <select id="get" resultMap="choiceQuestionMap">
         select *
         from question_public_sc
         where id = #{id}
     </select>
+
+    <select id="getPaperQuestion" resultMap="paperAndQuestionMap">
+        select *
+        from paper_quesion
+        where paper_id = #{paperId}
+    </select>
+
+    <select id="getQuestionSc" resultMap="choiceQuestionMap">
+        select *
+        from question_public_sc
+        where examine = 0
+    </select>
+
+    <select id="getQuestionComp" resultMap="completionMap">
+        select *
+        from question_public_completion
+        where examine = 0
+    </select>
+
+    <select id="getQuestionByPaperId" resultMap="choiceQuestionMap">
+        select *
+        from question_public_sc
+        where id in (
+            select quesion_id
+            from paper_quesion
+            where paper_id = #{id}
+        )
+
+    </select>
+
+    <select id="getQuestionTestedByPaperId" resultMap="paperAndQuestionTestedMap">
+        select *
+        from finished_question
+        where paper_id = #{id}
+
+    </select>
+
+    <select id="getQuestionTestedCorrectByPaperId" resultMap="paperAndQuestionTestedCorrectMap">
+        select *
+        from finished_question
+        where paper_id = #{id}
+
+    </select>
+
+    <insert id="addPaperQuestion">
+        insert into paper_quesion(paper_id, quesion_type, quesion_id, mark, quesion_index, private)
+        VALUES (#{paperId},#{questionType},#{questionId},#{mark},#{questionIndex},#{privateQ})
+    </insert>
 
     <delete id="delete">
         delete

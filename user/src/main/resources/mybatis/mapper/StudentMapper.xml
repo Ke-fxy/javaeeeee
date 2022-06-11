@@ -5,6 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="sno" jdbcType="INTEGER" property="sno" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="paper_id" jdbcType="INTEGER" property="paperId" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="head_img" jdbcType="VARCHAR" property="headImg" />
     <result column="class_name" jdbcType="VARCHAR" property="className" />
@@ -302,15 +303,68 @@
       gender = #{gender,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updatePassword">
-    update student
-    set password = #{password}
-    where id = #{id}
-  </update>
 
   <update id="updateRole">
     update student
     set role = #{role}
     where id = #{studentId}
   </update>
+
+  <update id="updatePassword">
+    update student
+    set password = #{password}
+    where id = #{id}
+  </update>
+  <select id="getIdBySno">
+    select id
+    from student
+    where sno = #{sno}
+  </select>
+  <select id="getById" resultMap="BaseResultMap">
+    select *
+    from student
+    where id = #{id}
+  </select>
+  <select id="getAll" resultMap="BaseResultMap">
+    select *
+    from student
+    where 1 = 1
+    <if test="numStr!=null">
+      and (sno like '%${numStr}%')
+    </if>
+    <if test="nameStr!=null">
+      and (name like '%${nameStr}%')
+    </if>
+  </select>
+
+  <select id="getAllByTeacherId" resultMap="BaseResultMap">
+    select *
+    from student s
+    where s.id in (select course_teacher_stu.student_id from course_teacher_stu where course_teacher_stu.teacher_id = #{id})
+    <if test="numStr!=null">
+      and (s.sno like '%${numStr}%')
+    </if>
+    <if test="nameStr!=null">
+      and (s.name like '%${nameStr}%')
+    </if>
+  </select>
+
+  <update id="update">
+    update student
+    set sno = #{sno},
+        name = #{name},
+        phone = #{phone},
+        password = #{password},
+        gender = #{gender}
+    where id = #{id}
+  </update>
+  <delete id="delete">
+    delete from student
+    where id = #{id}
+  </delete>
 </mapper>
+
+
+
+
+

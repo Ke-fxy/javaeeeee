@@ -16,6 +16,8 @@ public class Test {
 
     private Integer createrId;
 
+    private Integer paperId;
+
     private Timestamp createTime;
 
     private Timestamp beginTime;

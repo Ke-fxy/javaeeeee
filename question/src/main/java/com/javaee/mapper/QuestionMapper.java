@@ -1,9 +1,6 @@
 package com.javaee.mapper;
 
-import com.javaee.entities.QuestionPublicComp;
-import com.javaee.entities.QuestionPublicCompWithName;
-import com.javaee.entities.QuestionPublicSc;
-import com.javaee.entities.QuestionPublicScWithName;
+import com.javaee.entities.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -53,6 +50,13 @@ public interface QuestionMapper {
      */
     QuestionPublicSc get(@Param("id") Integer id);
 
+    List<QuestionPublicSc> getQuestionByPaperId(@Param("id") Integer id);
+
+    Integer updateScore(@Param("score") Integer score,
+                        @Param("paperId") Integer paperId,
+                        @Param("studentId") Integer studentId,
+                        @Param("questionId") Integer questionId);
+
     int delete(@Param("id") Integer id);
 
     Integer update(@Param("id") Integer id,
@@ -72,12 +76,23 @@ public interface QuestionMapper {
      */
     List<QuestionPublicSc> getAll();
 
+    List<PaperAndQuestion> getPaperQuestion(@Param("paperId") Integer paperId);
+    List<PaperAndQuestionTested> getQuestionTestedByPaperId(@Param("id") Integer id);
+    List<PaperAndQuestionTestedCorrect> getQuestionTestedCorrectByPaperId(@Param("id") Integer id);
+
     /**
      * 通过userId获得当前用户的权限
      * @param userId
      * @return
      */
     Integer getUserRoleById(@Param("userId") Integer userId);
+
+    Integer addPaperQuestion(@Param("paperId") Integer paperId,
+                             @Param("questionType") Integer questionType,
+                             @Param("questionId") Integer questionId,
+                             @Param("mark") Integer mark,
+                             @Param("questionIndex") Integer questionIndex,
+                             @Param("privateQ") Integer privateQ);
 
     /**
      * 根绝课程id获得所有未审核的题目
@@ -184,4 +199,20 @@ public interface QuestionMapper {
                                                                 @Param("chapterId") Integer chapterId,
                                                                 @Param("modularId") Integer modularId,
                                                                 @Param("content") String content);
+
+    /**
+     * create by: Chalksyy
+     * description: 获得所有未审核的选择题
+     * create time: 2022/5/23 18:40
+     * @return
+     */
+    List<QuestionPublicScWithName> getQuestionSc();
+
+    /**
+     * create by: Chalksyy
+     * description: 获得所有未审核填空题
+     * create time: 2022/5/23 18:45
+     * @return
+     */
+    List<QuestionPublicCompWithName> getQuestionComp();
 }

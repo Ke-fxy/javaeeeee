@@ -12,7 +12,72 @@
         <result column="change" property="change"></result>
     </resultMap>
 
-    <insert id="addPaper" useGeneratedKeys="true" parameterType="com.javaee.entities.Paper" keyProperty="id">
+    <resultMap id="SubmitPaperMap" type="com.javaee.entities.SubmitPaper">
+        <id column="id" property="id"></id>
+        <result column="paper_id" property="paperId"></result>
+        <result column="full_mark" property="fullMark"></result>
+        <result column="student_id" property="studentId"></result>
+        <result column="question_id" property="questionId"></result>
+        <result column="question_type" property="questionType"></result>
+        <result column="result" property="result"></result>
+        <result column="score" property="score"></result>
+        <result column="question_index" property="questionIndex"></result>
+    </resultMap>
+
+    <resultMap id="choiceQuestionMap" type="com.javaee.entities.QuestionPublicSc">
+        <id column="id" property="id"></id>
+        <result column="text" property="text"></result>
+        <result column="option1" property="option1"></result>
+        <result column="option2" property="option2"></result>
+        <result column="option3" property="option3"></result>
+        <result column="option4" property="option4"></result>
+        <result column="answer" property="answer"></result>
+        <result column="creater_id" property="createrId"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="course_id" property="courseId"></result>
+        <result column="chapter_id" property="chapterId"></result>
+        <result column="modular_id" property="modularId"></result>
+        <result column="diffculyt" property="diffculyt"></result>
+        <result column="examine" property="examine"></result>
+        <result column="examiner_id" property="examinerId"></result>
+        <result column="examiner_time" property="examinerTime"></result>
+        <result column="type" property="type"></result>
+    </resultMap>
+
+    <resultMap id="paperAndQuestionMap" type="com.javaee.entities.PaperAndQuestion">
+        <id column="id" property="id"></id>
+        <result column="paper_id" property="paperId"></result>
+        <result column="quesion_type" property="questionType"></result>
+        <result column="quesion_id" property="questionId"></result>
+        <result column="mark" property="mark"></result>
+        <result column="quesion_index" property="questionIndex"></result>
+        <result column="private" property="privateQ"></result>
+    </resultMap>
+
+    <resultMap id="paperAndQuestionTestedMap" type="com.javaee.entities.PaperAndQuestionTested">
+        <id column="id" property="id"></id>
+        <result column="paper_id" property="paperId"></result>
+        <result column="quesion_type" property="questionType"></result>
+        <result column="quesion_id" property="questionId"></result>
+        <result column="full_mark" property="mark"></result>
+        <result column="quesion_index" property="questionIndex"></result>
+        <result column="private" property="privateQ"></result>
+        <result column="result" property="result"></result>
+    </resultMap>
+
+    <resultMap id="paperAndQuestionTestedCorrectMap" type="com.javaee.entities.PaperAndQuestionTestedCorrect">
+        <id column="id" property="id"></id>
+        <result column="paper_id" property="paperId"></result>
+        <result column="quesion_index" property="questionIndex"></result>
+        <result column="result" property="result"></result>
+        <result column="student_id" property="studentId"></result>
+        <result column="score" property="score"></result>
+        <result column="full_mark" property="fullMark"></result>
+        <result column="quesion_id" property="questionId"></result>
+        <result column="quesion_type" property="questionType"></result>
+    </resultMap>
+
+    <insert id="addPaper" useGeneratedKeys="true" parameterType="com.javaee.entities.Paper" keyProperty="id" keyColumn="id">
         insert into paper(paper_name, max_mark, creater_id, course_id, create_time, `change`)
         VALUES (#{paperName},#{maxMark},#{creatorId},#{courseId},#{createTime},#{change})
     </insert>
@@ -24,12 +89,46 @@
 
     <insert id="addPaperPublicSc">
         insert into paper_quesion(paper_id, quesion_type, private, quesion_id, mark, quesion_index)
-        VALUES (#{id},1,1,#{questionId},#{mark},#{index})
+        VALUES (#{id},0,1,#{questionId},#{mark},#{index})
     </insert>
+
+    <select id="getPaperQuestionTested" resultMap="SubmitPaperMap">
+        select *
+        from finished_question
+        where paper_id in (
+            select paper_id
+            from test_paper
+            where test_id in (
+                select test.id
+                from test
+                where timestampdiff(MINUTE,test.begin_time,now()) &gt;= test.limit_time
+            )
+        )
+    </select>
+
+    <select id="getPaperTested" resultMap="BaseResultMap">
+        select *
+        from paper
+        where paper.id in (
+            select paper_id
+            from test_paper
+            where test_id in (
+                select test.id
+                from test
+                where timestampdiff(MINUTE,test.begin_time,now()) &gt;= test.limit_time
+            )
+        )
+    </select>
+
 
     <insert id="addPaperPublicComp">
         insert into paper_quesion(paper_id, quesion_type, private, quesion_id, mark, quesion_index)
-        VALUES (#{id},4,1,#{questionId},#{mark},#{index})
+        VALUES (#{id},1,1,#{questionId},#{mark},#{index})
+    </insert>
+
+    <insert id="insertTested">
+        insert into test_student(testId, studentId)
+        VALUES (#{testId},#{studentId})
     </insert>
 
     <delete id="deletePaper">
@@ -51,8 +150,6 @@
         where id = #{id}
     </update>
 
-
-
     <select id="getPaper" resultType="com.javaee.entities.Paper">
         select *
         from paper
@@ -64,15 +161,56 @@
         from paper
     </select>
 
+    <select id="getAllByCourseId" resultMap="BaseResultMap">
+        select *
+        from paper
+        where course_id = #{courseId}
+    </select>
+
     <select id="getSum" resultType="java.lang.Integer">
         select count(*)
-        from <if test="type==1">question_public_sc</if> <if test="type==4">question_public_completion</if>
+        from <if test="type==1">question_public_sc</if> <if test="type==4">question_type_completion</if>
         where course_id=#{courseId}
     </select>
 
-    <select id="getIdList" resultType="java.lang.Integer">
-        select id
-        from <if test="type==1">question_public_sc</if> <if test="type==4">question_public_completion</if>
-        where course_id=#{courseId}
+    <insert id="submitPaper">
+        insert into finished_question(paper_id,question_index,result,student_id,score,full_mark,question_id,question_type)
+        VALUES (#{paperId},#{questionIndex},#{result},#{studentId},#{score},#{fullMark},#{questionId},#{questionType})
+    </insert>
+
+    <select id="getQuestionByPaperId" resultMap="choiceQuestionMap">
+        select *
+        from question_public_sc
+        where id in (
+            select quesion_id
+            from paper_quesion
+            where paper_id = #{id}
+        )
+    </select>
+
+    <update id="updateScore">
+        update finished_question
+        set score = #{score}
+        where paper_id = #{paperId} and student_id = #{studentId} and question_id = #{questionId}
+    </update>
+
+    <select id="getPaperQuestion" resultMap="paperAndQuestionMap">
+        select *
+        from paper_quesion
+        where paper_id = #{paperId}
+    </select>
+
+    <select id="getQuestionTestedByPaperId" resultMap="paperAndQuestionTestedMap">
+        select *
+        from finished_question
+        where paper_id = #{id}
+
+    </select>
+
+    <select id="getQuestionTestedCorrectByPaperId" resultMap="paperAndQuestionTestedCorrectMap">
+        select *
+        from finished_question
+        where paper_id = #{id}
+
     </select>
 </mapper>

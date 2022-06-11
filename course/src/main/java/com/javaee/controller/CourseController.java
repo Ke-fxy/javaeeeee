@@ -10,10 +10,7 @@ import com.javaee.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -29,6 +26,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/course")
+@CrossOrigin(maxAge = 3600,value = "*")
 public class CourseController {
 
     @Resource
@@ -72,6 +70,7 @@ public class CourseController {
         return b ? new CommonResult<>(100, "添加成功") : new CommonResult<>(200, "添加失败");
 
     }
+
     @PostMapping(value = "/deleteCourse")
     public CommonResult<String> deleteCourse(@RequestBody HashMap<String, String> map) {
 
@@ -398,9 +397,9 @@ public class CourseController {
 
         Integer sortResult;
 
-        if ("+id".equals(sort)){
+        if ("+id".equals(sort)) {
             sortResult = 1;
-        }else {
+        } else {
             sortResult = 0;
         }
 
@@ -432,7 +431,7 @@ public class CourseController {
 
         if (courseName == null && status == null) {
             PageHelper.startPage(page, limit);
-            List<Course> courseList = courseService.getCourses(credit,type,sortResult);
+            List<Course> courseList = courseService.getCourses(credit, type, sortResult);
             System.out.println(1);
 
             if (courseList != null) {
@@ -444,7 +443,7 @@ public class CourseController {
             }
         } else if (courseName == null && status != null) {
             PageHelper.startPage(page, limit);
-            List<Course> courseList = courseService.getCourses(status,credit,type,sortResult);
+            List<Course> courseList = courseService.getCourses(status, credit, type, sortResult);
             System.out.println(2);
 
             if (courseList != null) {
@@ -456,7 +455,7 @@ public class CourseController {
             }
         } else if (courseName != null && status == null) {
             PageHelper.startPage(page, limit);
-            List<Course> courseList = courseService.getCourses(courseName,credit,type,sortResult);
+            List<Course> courseList = courseService.getCourses(courseName, credit, type, sortResult);
             System.out.println(3);
 
             if (courseList != null) {
@@ -468,7 +467,7 @@ public class CourseController {
             }
         } else {
             PageHelper.startPage(page, limit);
-            List<Course> courseList = courseService.getCourses(courseName, status,credit,type,sortResult);
+            List<Course> courseList = courseService.getCourses(courseName, status, credit, type, sortResult);
             System.out.println(4);
 
             if (courseList != null) {
@@ -483,7 +482,7 @@ public class CourseController {
     }
 
     @PostMapping(value = "/updateStatus")
-    public CommonResult<String> updateStatus(@RequestBody HashMap<String,String> map){
+    public CommonResult<String> updateStatus(@RequestBody HashMap<String, String> map) {
 
         String token = map.get("token");
         String checkup = checkup(token);
@@ -498,17 +497,17 @@ public class CourseController {
             courseId = Integer.parseInt(map.get("courseId"));
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            return new CommonResult<>(200,"传的courseId是啥");
+            return new CommonResult<>(200, "传的courseId是啥");
         }
 
         Integer status = Integer.parseInt(map.get("status"));
 
         boolean b = courseService.updateStatus(courseId, status);
 
-        if (b){
-            return new CommonResult<>(100,"修改成功");
-        }else {
-            return new CommonResult<>(200,"修改失败");
+        if (b) {
+            return new CommonResult<>(100, "修改成功");
+        } else {
+            return new CommonResult<>(200, "修改失败");
         }
 
     }

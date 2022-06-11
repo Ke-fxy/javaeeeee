@@ -7,10 +7,7 @@ import com.javaee.util.JavaWebToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -26,7 +23,8 @@ import java.util.Map;
  */
 @RestController
 @Slf4j
-@RequestMapping(value = "/teacher")
+@RequestMapping(value = "/user/teacher")
+@CrossOrigin(maxAge = 3600,value = "*")
 public class TeacherController {
 
     @Resource

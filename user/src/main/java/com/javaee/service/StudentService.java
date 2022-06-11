@@ -1,5 +1,7 @@
 package com.javaee.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.javaee.entities.Student;
 import com.javaee.entities.StudentExample;
 import com.javaee.mapper.StudentMapper;
@@ -72,6 +74,55 @@ public class StudentService {
         } else {
             return null;
         }
+    }
+
+    public Student getById(Integer id){
+        Student student = studentMapper.getById(id);
+        try {
+            student.setPassword(RSAEncrypt.decrypt(student.getPassword()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return student;
+    }
+
+    public Integer getIdBySno(Integer sno){
+        return studentMapper.getIdBySno(sno);
+    }
+
+    public PageInfo<Student> getAll(String numStr, String nameStr, String limit, String page){
+
+        Integer pageNum = Integer.parseInt(page);
+        Integer pageSize = Integer.parseInt(limit);
+        PageHelper.startPage(pageNum, pageSize);
+        List<Student> studentList = studentMapper.getAll(numStr,nameStr);
+        PageInfo<Student> pageInfo = new PageInfo<>(studentList);
+        return pageInfo;
+    };
+
+    public PageInfo<Student> getAllStudentByTeacherId(Integer id,String numStr,String nameStr,String limit,String page){
+
+        Integer pageNum = Integer.parseInt(page);
+        Integer pageSize = Integer.parseInt(limit);
+        PageHelper.startPage(pageNum, pageSize);
+        List<Student> studentList = studentMapper.getAllByTeacherId(id,numStr,nameStr);
+        PageInfo<Student> pageInfo = new PageInfo<>(studentList);
+        return pageInfo;
+    };
+
+    public Integer update(Integer id,Integer sno,String name,String phone,String password,Integer gender){
+        String decrypt = "";
+        try {
+            decrypt = RSAEncrypt.encrypt(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return studentMapper.update(id, sno, name, phone, decrypt, gender);
+    }
+
+    public Integer delete(Integer id){
+        return studentMapper.delete(id);
     }
 
 

@@ -2,33 +2,37 @@ package com.javaee.entities;
 
 import lombok.*;
 
-import java.sql.Time;
-import java.util.List;
-import java.util.Map;
-
 /**
  * create by: syy
  * description: TODO
- * create time: 2022/3/19 15:56
-
+ * create time: 2022/4/30 14:49
+ *
  */
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PaperQuestion {
+public class PaperAndQuestion {
+
+    private Integer id;
+
+    private Integer paperId;
 
     private String questionType;
 
     private Integer questionId;
 
+    private Integer mark;
+
     private Integer questionIndex;
 
     private Integer privateQ;
 
-//    private Time createTime;
 
-    private Integer mark;
+
+
+
+//    private List<QuestionPublicSc> list;
 
 }

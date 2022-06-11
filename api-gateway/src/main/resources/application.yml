@@ -15,16 +15,44 @@ spring:
           enabled: true
       routes:
         - id: user-route
-          uri: lb://service-user
+          uri: lb://user
           order: 1
           predicates:
             - Path=/user/**
           filters:
             - StripPrefix=1
         - id: course-route
-          uri: lb://service-course
+          uri: lb://course
           order: 1
           predicates:
             - Path=/course/**
+          filters:
+            - StripPrefix=1
+        - id: face-route
+          uri: lb://face
+          order: 1
+          predicates:
+            - Path=/face/**
+          filters:
+            - StripPrefix=1
+        - id: paper-route
+          uri: lb://paper
+          order: 1
+          predicates:
+            - Path=/paper/**
+          filters:
+            - StripPrefix=1
+        - id: question-route
+          uri: lb://question
+          order: 1
+          predicates:
+             - Path=/question/**
+          filters:
+            - StripPrefix=1
+        - id: test-route
+          uri: lb://test
+          order: 1
+          predicates:
+            - Path=/test/**
           filters:
             - StripPrefix=1
