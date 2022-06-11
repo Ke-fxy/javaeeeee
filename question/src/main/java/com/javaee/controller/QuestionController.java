@@ -7,6 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.javaee.entities.*;
 import com.javaee.service.QuestionService;
 import com.javaee.util.JavaWebToken;
+import com.javaee.util.ObjectTo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -541,11 +542,13 @@ public class QuestionController {
             return new CommonResult<>(200, "用户未登录或登录状态失效");
         }
         Integer type = null;
-        int[] questionIdList;
+        System.out.println(map.get("questionIdList"));
+        ArrayList<Integer> questionIdList = null;
 
         try {
             type = (Integer) map.get("type");
-            questionIdList = (int[]) map.get("questionIdList");
+            questionIdList = ObjectTo.swap(map.get("questionIdList"));
+            System.out.println(questionIdList);
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult<>(200, "数据传输错误");

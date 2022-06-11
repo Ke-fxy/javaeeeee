@@ -241,14 +241,14 @@ public class QuestionService {
 
     }
 
-    public List<QuestionEntity> getQuestionEntity(Integer type, int[] answerIdList) {
+    public List<QuestionEntity> getQuestionEntity(Integer type, ArrayList<Integer> answerIdList) {
 
         List<QuestionEntity> questionEntities = new ArrayList<>();
 
         //选择题
         if(type==1){
-            for (int i = 0; i < answerIdList.length; i++) {
-                QuestionPublicSc questionPublicSc = questionMapper.get(answerIdList[i]);
+            for (int i = 0; i < answerIdList.size(); i++) {
+                QuestionPublicSc questionPublicSc = questionMapper.get(answerIdList.get(i));
                 ArrayList<Answer> answers = new ArrayList<>();
                 answers.add(new Answer("A",questionPublicSc.getOption1()));
                 answers.add(new Answer("B",questionPublicSc.getOption2()));
@@ -260,8 +260,8 @@ public class QuestionService {
                 questionEntities.add(questionEntity);
             }
         }else if (type==4){
-            for (int i = 0; i < answerIdList.length; i++) {
-                QuestionPublicComp questionPublicComp = questionMapper.getComp(answerIdList[i]);
+            for (int i = 0; i < answerIdList.size(); i++) {
+                QuestionPublicComp questionPublicComp = questionMapper.getComp((int)answerIdList.get(i));
                 ArrayList<Answer> answers = new ArrayList<>();
                 ArrayList<String> correct = new ArrayList<>();
                 correct.add(questionPublicComp.getAnswer1());
