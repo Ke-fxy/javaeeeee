@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/question")
-@CrossOrigin(maxAge = 3600,value = "*")
+@CrossOrigin(maxAge = 3600, value = "*")
 public class QuestionController {
 
     @Resource
@@ -71,10 +71,11 @@ public class QuestionController {
         Integer chapterId = Integer.valueOf(map.get("chapterId"));
         Integer modularId = Integer.valueOf(map.get("modularId"));
         Integer diffculyt = Integer.valueOf(map.get("diffculyt"));
+        Integer courseId = Integer.valueOf(map.get("courseId"));
 
         Integer createrId = Integer.parseInt(checkup);
 
-        Integer integer = questionService.addQuestion(null, text, option1, option2, option3, option4, answer, createrId, createTime, chapterId, modularId, diffculyt);
+        Integer integer = questionService.addQuestion(null, text, option1, option2, option3, option4, answer, createrId, courseId, createTime, chapterId, modularId, diffculyt);
 
         if (integer == 0) {
             return new CommonResult<>(200, "插入失败");
@@ -422,6 +423,11 @@ public class QuestionController {
         return null;
     }*/
 
+    /**
+     * 根据条件查询题目（）
+     * @param map
+     * @return
+     */
     @PostMapping(value = "/getQuestion")
     public CommonResult<Object> getQuestion(@RequestBody HashMap<String, Object> map) {
 
@@ -432,7 +438,7 @@ public class QuestionController {
             return new CommonResult<>(200, "用户未登录或登录状态失效");
         }
 
-        Integer courseId = Integer.parseInt((String) map.get("courseId"));
+        Integer courseId = Integer.parseInt(String.valueOf(map.get("courseId")));
 
         if (courseId == null) {
             return new CommonResult<>(200, "courseId呢");
@@ -443,7 +449,7 @@ public class QuestionController {
         Integer modularId = null;
         String content = null;
         try {
-            chapterId = Integer.parseInt((String) map.get("chapterId"));
+            chapterId = Integer.parseInt(String.valueOf(map.get("chapterId")));
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -454,18 +460,18 @@ public class QuestionController {
             e.printStackTrace();
         }
 
-        type = (String) map.get("type");
-        content = (String) map.get("content");
+        type = String.valueOf(map.get("type"));
+        content = String.valueOf(map.get("content"));
 
         Integer page = null;
         try {
-            page = (Integer) map.get("page");
+            page = Integer.parseInt(String.valueOf(map.get("page")));
         } catch (Exception e) {
             page = 1;
             e.printStackTrace();
         }
 
-        Integer limit = (Integer) map.get("limit");
+        Integer limit = Integer.parseInt(String.valueOf(map.get("limit")));
 
         PageHelper.startPage(page, limit);
         List<Object> list = questionService.getAllQuestionInConditionWithName(type, courseId, chapterId, modularId, content);
@@ -494,15 +500,15 @@ public class QuestionController {
 
         Integer paperId = Integer.parseInt(map.get("paperId").toString());
 
-        List<PaperQuestion> paperQuestionList2= new ArrayList<>();
+        List<PaperQuestion> paperQuestionList2 = new ArrayList<>();
 
-        List<PaperQuestion> paperQuestionList = (List<PaperQuestion>)map.get("questionList");
+        List<PaperQuestion> paperQuestionList = (List<PaperQuestion>) map.get("questionList");
 //遍历list
-        for(Object object:paperQuestionList){
+        for (Object object : paperQuestionList) {
             // 将list中的数据转成json字符串
-            String jsonObject= JSON.toJSONString(object);
+            String jsonObject = JSON.toJSONString(object);
             //将json转成需要的对象
-            PaperQuestion paperQuestion= JSONObject.parseObject(jsonObject,PaperQuestion.class);
+            PaperQuestion paperQuestion = JSONObject.parseObject(jsonObject, PaperQuestion.class);
             paperQuestionList2.add(paperQuestion);
 //            System.out.println(courseInfo);
         }
@@ -512,7 +518,7 @@ public class QuestionController {
         Integer mark = null;
         Integer questionIndex = null;
         Integer privateQ = null;
-        Integer result=1;
+        Integer result = 1;
         System.out.println("paperQuestionList2 = " + paperQuestionList2);
         for (int i = 0; i < paperQuestionList2.size(); i++) {
             questionType = Integer.parseInt(paperQuestionList2.get(i).getQuestionType());
@@ -520,19 +526,19 @@ public class QuestionController {
             mark = paperQuestionList2.get(i).getMark();
             questionIndex = paperQuestionList2.get(i).getQuestionIndex();
             privateQ = paperQuestionList2.get(i).getPrivateQ();
-            result = questionService.addPaperQuestion(paperId,questionType,questionId,mark,questionIndex,privateQ) * result;
+            result = questionService.addPaperQuestion(paperId, questionType, questionId, mark, questionIndex, privateQ) * result;
         }
 
-        if (result > 0){
-            return new CommonResult<>(100,"查询成功");
-        }else {
-            return new CommonResult<>(200,"查询失败");
+        if (result > 0) {
+            return new CommonResult<>(100, "查询成功");
+        } else {
+            return new CommonResult<>(200, "查询失败");
         }
 
     }
 
 
-    @PostMapping(value = "/getQuestionEntity")
+    @PostMapping(value = "/getQuestionEntity")//根据id和题目的类型返回题目信息
     public CommonResult<List<QuestionEntity>> getQuestionEntity(@RequestBody HashMap<String, Object> map) {
 
         String token = (String) map.get("token");
@@ -554,29 +560,30 @@ public class QuestionController {
             return new CommonResult<>(200, "数据传输错误");
         }
 
-        List<QuestionEntity> questions =  questionService.getQuestionEntity(type,questionIdList);
+        //questionEntity类只有前端所需信息，不包含题目完整信息
+        List<QuestionEntity> questions = questionService.getQuestionEntity(type, questionIdList);
 
-        if (questions!=null){
-            return new CommonResult<>(100,"查询成功",questions);
-        }else {
-            return new CommonResult<>(200,"查询失败");
+        if (questions != null) {
+            return new CommonResult<>(100, "查询成功", questions);
+        } else {
+            return new CommonResult<>(200, "查询失败");
         }
 
     }
 
-    @PostMapping(value = "/getAllQuestionNotApproved")
+    @PostMapping(value = "/getAllQuestionNotApproved")//没有经过审核的题目
     public CommonResult<Object> getAllQuestionNotApproved(@RequestBody HashMap<String, String> map) {
 
         String token = map.get("token");
-        String checkup =checkup(token);
+        String checkup = checkup(token);
 
         if (checkup == null) {
             return new CommonResult<>(200, "用户未登录或登录状态失效", null);
         }
 
-        PageInfo<Student> studentList = questionService.getAllNotApproved(map.get("type"),map.get("limit"),map.get("page"));
+        PageInfo<Student> studentList = questionService.getAllNotApproved(map.get("type"), map.get("limit"), map.get("page"));
 
-        return studentList != null ? new CommonResult<>(100,"获取题目列表成功",studentList):new CommonResult<>(200,"获取题目列表失败");
+        return studentList != null ? new CommonResult<>(100, "获取题目列表成功", studentList) : new CommonResult<>(200, "获取题目列表失败");
 
     }
 

@@ -38,6 +38,7 @@ public interface QuestionMapper {
                    @Param("option4")String option4,
                    @Param("answer")String answer,
                    @Param("createrId")Integer createrId,
+                   @Param("courseId") Integer courseId,
                    @Param("createTime") Timestamp createTime,
                    @Param("chapterId")Integer chapterId,
                    @Param("modularId")Integer modularId,

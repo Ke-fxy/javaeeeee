@@ -47,4 +47,10 @@
     where id = #{teacherId}
   </update>
 
+  <select id="getTeacherByPhone" resultMap="BaseResultMap">
+    select *
+    from teacher
+    where phone=#{phone}
+  </select>
+
 </mapper>

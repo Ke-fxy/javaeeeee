@@ -116,16 +116,20 @@
     </resultMap>
 
     <insert id="insert">
-        insert into question_public_sc(id, text, option1, option2, option3, option4, answer, creater_id, create_time,
+        insert into question_public_sc(id, text, option1, option2, option3, option4, answer, course_id, creater_id,
+                                       create_time,
                                        chapter_id, modular_id, diffculyt, examine, examiner_id, examine_time, type)
-        values (#{id}, #{text}, #{option1}, #{option2}, #{option3}, #{option4}, #{answer}, #{createrId}, #{createTime},
-                #{chapterId}, #{modularId}, #{diffculyt}, null, null, null, 0)
+        values (#{id}, #{text}, #{option1}, #{option2}, #{option3}, #{option4}, #{answer}, #{courseId}, #{createrId},
+                #{createTime},
+                #{chapterId}, #{modularId}, #{diffculyt}, null, null, null, 1)
     </insert>
 
     <update id="updateScore">
         update finished_question
         set score = #{score}
-        where paper_id = #{paperId} and student_id = #{studentId} and question_id = #{questionId}
+        where paper_id = #{paperId}
+          and student_id = #{studentId}
+          and question_id = #{questionId}
     </update>
 
     <select id="get" resultMap="choiceQuestionMap">
@@ -179,7 +183,7 @@
 
     <insert id="addPaperQuestion">
         insert into paper_quesion(paper_id, quesion_type, quesion_id, mark, quesion_index, private)
-        VALUES (#{paperId},#{questionType},#{questionId},#{mark},#{questionIndex},#{privateQ})
+        VALUES (#{paperId}, #{questionType}, #{questionId}, #{mark}, #{questionIndex}, #{privateQ})
     </insert>
 
     <delete id="delete">
@@ -273,12 +277,10 @@
         <trim prefix="where" prefixOverrides="and" suffix="" suffixOverrides="and">
             q.course_id=#{courseId} and
             <if test="chapterId!=null">
-
                 q.chapter_id=#{chapterId} and
             </if>
             <if test="modularId!=null">
-
-                q.modualr_id=#{modularId} and
+                q.modular_id=#{modularId} and
             </if>
             <if test="content!=null">
                 q.text like "%"#{content}"%"
@@ -298,7 +300,7 @@
             </if>
             <if test="modularId!=null">
 
-                q.modualr_id=#{modularId} and
+                q.modular_id=#{modularId} and
             </if>
             <if test="content!=null">
                 q.content like "%"#{content}"%"

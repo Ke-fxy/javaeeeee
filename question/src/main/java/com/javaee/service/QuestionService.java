@@ -33,12 +33,13 @@ public class QuestionService {
                                String option4,
                                String answer,
                                Integer createrId,
+                               Integer courseId,
                                Timestamp createTime,
                                Integer chapterId,
                                Integer modularId,
                                Integer diffculyt) {
 
-        Integer insert = questionMapper.insert(id, text, option1, option2, option3, option4, answer, createrId, createTime, chapterId, modularId, diffculyt);
+        Integer insert = questionMapper.insert(id, text, option1, option2, option3, option4, answer, createrId, courseId,createTime, chapterId, modularId, diffculyt);
 
         return insert;
 
@@ -219,7 +220,6 @@ public class QuestionService {
             /*SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             for (QuestionPublicScWithName questionPublicScWithName:questionScInCondition){
                 Timestamp createTime = questionPublicScWithName.getCreateTime();
-
             }*/
             return questionScInCondition;
         }else {

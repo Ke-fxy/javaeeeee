@@ -2,7 +2,6 @@ package com.javaee.controller;
 
 import com.javaee.entities.AiFaceObject;
 import com.javaee.entities.CommonResult;
-import com.javaee.service.FaceService;
 import com.javaee.util.FaceDetection;
 import com.javaee.util.FaceRegistration;
 import com.javaee.util.FaceSearch;
@@ -29,9 +28,6 @@ public class FaceController {
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
-
-    @Resource
-    FaceService faceService;
 
     private String checkup(String token) {
 

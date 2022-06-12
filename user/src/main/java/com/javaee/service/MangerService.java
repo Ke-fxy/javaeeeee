@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -50,7 +51,7 @@ public class MangerService {
 
                 ValueOperations<String, String> forValue = stringRedisTemplate.opsForValue();
                 forValue.set("userToken:" + token, String.valueOf(manager.getId()));
-                //stringRedisTemplate.expire("userToken:" + token, 7, TimeUnit.DAYS);
+                stringRedisTemplate.expire("userToken:" + token, 7, TimeUnit.DAYS);
                 return token;
             } else {
                 return null;

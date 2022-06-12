@@ -149,4 +149,46 @@ public class TeacherController {
 
     }
 
+    @PostMapping(value = "/getCode")
+    public CommonResult<String> getCode(@RequestBody Map map) {
+
+        /*String token = (String) map.get("token");
+        String checkResult = studentService.checkup(token);
+
+        if (checkResult == null) {
+            return new CommonResult<>(200, "用户未登录或登录状态失效");
+        }*/
+
+        String phone = (String) map.get("phone");
+        if (phone.length()!=11){
+            return new CommonResult<>(200,"手机号码格式不正确");
+        }
+
+        String code = teacherService.getCode(phone);
+
+        return new CommonResult<>(100, "?", code);
+    }
+
+    @PostMapping(value = "/checkCode")
+    public CommonResult<String> checkCode(@RequestBody HashMap<String,Object> map){
+
+        String phone = null;
+        String code = null;
+
+        try {
+            phone = String.valueOf(map.get("phone"));
+            code = String.valueOf(map.get("code"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResult<>(200, "数据传输错误");
+        }
+        String token = teacherService.checkCode(phone, code);
+        if (token != null) {
+            return new CommonResult<>(100, "登录成功", token);
+        }else {
+            return new CommonResult<>(200,"登录失败，验证码错误");
+        }
+
+    }
+
 }

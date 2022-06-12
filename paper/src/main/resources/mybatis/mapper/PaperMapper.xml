@@ -89,7 +89,7 @@
 
     <insert id="addPaperPublicSc">
         insert into paper_quesion(paper_id, quesion_type, private, quesion_id, mark, quesion_index)
-        VALUES (#{id},0,1,#{questionId},#{mark},#{index})
+        VALUES (#{id},1,1,#{questionId},#{mark},#{index})
     </insert>
 
     <select id="getPaperQuestionTested" resultMap="SubmitPaperMap">
@@ -123,7 +123,7 @@
 
     <insert id="addPaperPublicComp">
         insert into paper_quesion(paper_id, quesion_type, private, quesion_id, mark, quesion_index)
-        VALUES (#{id},1,1,#{questionId},#{mark},#{index})
+        VALUES (#{id},4,1,#{questionId},#{mark},#{index})
     </insert>
 
     <insert id="insertTested">
@@ -212,5 +212,11 @@
         from finished_question
         where paper_id = #{id}
 
+    </select>
+
+    <select id="getIdList" resultType="java.lang.Integer">
+        select id
+        from <if test="type==1">question_public_sc</if> <if test="type==4">question_public_completion</if>
+        where course_id=#{courseId}
     </select>
 </mapper>

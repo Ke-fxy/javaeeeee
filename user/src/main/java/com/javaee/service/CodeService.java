@@ -3,6 +3,7 @@ package com.javaee.service;
 import com.zhenzi.sms.ZhenziSmsClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class CodeService {
 
     @Autowired
-    RedisTemplate redisTemplate;
+    StringRedisTemplate redisTemplate;
 
     public String setCode(String addr,String code,String phone){
 
@@ -50,7 +51,7 @@ public class CodeService {
                 "YTViMDg5MzktOGViYS00MTFjLWE3NGItNjZhYzNhYWM1NjZm");
         Map<String,Object> params = new HashMap<String, Object>();
         params.put("number",phone);
-        params.put("templateId","6757");
+        params.put("templateId","6466");
         String[] templateParams = new String[1];
         templateParams[0] = code;
         params.put("templateParams",templateParams);

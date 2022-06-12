@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * @Author Ke
  * @Date 2022/6/11 20:57
- * @Description 将object类型转换为数组
+ * @Description 将object类型转换为list
  * @Version 1.0
  */
 public class ObjectTo {

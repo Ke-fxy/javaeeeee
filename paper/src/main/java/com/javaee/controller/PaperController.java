@@ -343,7 +343,8 @@ public class PaperController {
             return new CommonResult<>(200, "失败成功", null);
         }
     }
-    @RequestMapping("/getAllPaperByCourseId")
+
+    @PostMapping("/getAllPaperByCourseId")
     public CommonResult<List<Paper>> getAllPaperByCourseId(@RequestBody HashMap<String, String> map) {
         String token = map.get("token");
         String checkup = checkup(token);
@@ -486,20 +487,22 @@ public class PaperController {
         Integer choiceScore = null;
         Integer comNum = null;
         Integer comScore = null;
-        Integer courseId=null;
+        Integer courseId = null;
+        Integer paperId = null;
         try {
-            choiceNum = (Integer) map.get("choiceNum");
-            choiceScore = (Integer) map.get("choiceScore");
-            comNum = (Integer) map.get("comNum");
-            comScore = (Integer) map.get("comScore");
-            courseId = (Integer)map.get("courseId");
+            choiceNum = Integer.valueOf(map.get("choiceNum").toString());
+            comNum = Integer.valueOf(map.get("comNum").toString());
+            choiceScore = Integer.valueOf(map.get("choiceScore").toString());
+            comScore = Integer.valueOf(map.get("comScore").toString());
+            courseId = Integer.valueOf(map.get("courseId").toString());
+            paperId = Integer.valueOf(map.get("paperId").toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        paperService.addPaperQuestionAuto(choiceNum,choiceScore,comNum,comScore,courseId);
-        return null;
+        paperService.addPaperQuestionAuto(choiceNum, choiceScore, comNum, comScore, courseId,paperId);
 
+        return new CommonResult<>(100,"添加成功");
 
     }
 

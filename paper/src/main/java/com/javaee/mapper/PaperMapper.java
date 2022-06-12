@@ -74,4 +74,7 @@ public interface PaperMapper {
                         @Param("paperId") Integer paperId,
                         @Param("studentId") Integer studentId,
                         @Param("questionId") Integer questionId);
+
+    List<Integer> getIdList(@Param("type") int type,
+                            @Param("courseId") Integer courseId);
 }

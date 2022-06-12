@@ -52,4 +52,6 @@ public interface TeacherMapper {
 
     Integer updateRole(@Param("teacherId") Integer teacherId,
                        @Param("role") Integer role);
+
+    Teacher getTeacherByPhone(@Param("phone") String phone);
 }
